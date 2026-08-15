@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PFG Downtime Analysis Dashboard 2026</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+#login-page{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.login-box{
+    background:rgba(255,255,255,0.1);
+    padding:30px;
+    border-radius:12px;
+    text-align:center;
+    width:320px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+.login-box h2{
+    margin-bottom:15px;
+}
+
+.login-box input{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:8px;
+    border:none;
+}
+
+.login-box button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#2D0083;
+    color:white;
+    cursor:pointer;
+    font-weight:500;
+}
+
+.login-box button:hover{
+    background:#06002E;
+}
+
+#error-msg{
+    color:#ff6b6b;
+    margin-top:10px;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:'Poppins', sans-serif;
+    min-height:100vh;
+    background: url("Background.jpg") no-repeat center center;
+    background-size: cover;
+    color:white;
+}
+
+/* HEADER */
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 40px;
+    background: linear-gradient(90deg, rgba(6,26,126,0.7), rgba(6,0,46,0.6));
+    backdrop-filter: blur(20px);
+    border-bottom:1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    min-width:0;
+}
+
+.logo{
+    height:42px;
+    width:auto;
+    display:block;
+}
+
+.header-title{
+    font-size:20px;
+    font-weight:600;
+    white-space:nowrap;
+}
+
+.version{
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+.nav-bar{
+    display:flex;
+    gap:12px;
+    margin-left:auto;
+}
+
+.nav-item{
+    padding:8px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    background:rgba(255,255,255,0.08);
+    transition:0.3s;
+    font-size:14px;
+}
+
+.nav-item.active{
+    background:#1C3E94;
+}
+
+.nav-item:hover{
+    background:rgba(255,255,255,0.2);
+}
+
+/* CONTAINER */
+
+.dashboard-container{
+    width:100%;
+    max-width:1200px;
+    margin: 10px auto;
+    padding:0 20px;
+}
+
+/* CARD */
+
+.dashboard-card{
+    background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05));
+    border-radius:18px;
+    padding:25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.dashboard-card:hover{
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.45);
+    transition: 0.3s;
+}
+
+/* POWER BI */
+
+.powerbi-wrapper{
+    width:100%;
+    aspect-ratio:16/9;
+    border-radius:12px;
+    overflow:hidden;
+}
+
+.powerbi-wrapper iframe{
+    width:100%;
+    height:100%;
+    border:none;
+}
+
+/* =========================
+   MOBILE RESPONSIVE FIX
+========================= */
+
+@media (max-width: 768px){
+
+    .header{
+        flex-direction:column;
+        align-items:flex-start;
+        padding:15px 20px;
+        gap:12px;
+    }
+
+    .header-left{
+        width:100%;
+        justify-content:flex-start;
+    }
+
+    .header-title{
+        font-size:16px;
+        white-space:normal;
+    }
+
+    .nav-bar{
+        width:100%;
+        overflow-x:auto;
+        gap:8px;
+    }
+
+    .nav-item{
+        flex:0 0 auto;
+        padding:8px 14px;
+        font-size:13px;
+    }
+
+    .dashboard-container{
+        width:95%;
+        margin:15px auto;
+    }
+
+    .dashboard-card{
+        padding:15px;
+    }
+
+    .powerbi-wrapper{
+        aspect-ratio: 16 / 10;
+    }
+
+    .login-box{
+        width:90%;
+        padding:20px;
+    }
+}
+
+</style>
+</head>
+
+<script>
+
+const SESSION_LIMIT = 30 * 60 * 1000;
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    const isLoggedIn = localStorage.getItem("loggedIn");
+    const loginTime = localStorage.getItem("loginTime");
+
+    if(isLoggedIn === "true" && loginTime){
+        const now = new Date().getTime();
+        if(now - loginTime < SESSION_LIMIT){
+            document.getElementById("login-page").style.display = "none";
+            document.getElementById("main-content").style.display = "block";
+        }else{
+            logout();
+        }
+    }else{
+        document.getElementById("login-page").style.display = "flex";
+        document.getElementById("main-content").style.display = "none";
+    }
+
+});
+
+function checkLogin(){
+    const password = document.getElementById("password").value;
+    if(password === "pfg12345"){
+        localStorage.setItem("loggedIn", "true");
+        localStorage.setItem("loginTime", new Date().getTime());
+        document.getElementById("login-page").style.display = "none";
+        document.getElementById("main-content").style.display = "block";
+    }else{
+        document.getElementById("error-msg").innerText = "Wrong password";
+    }
+}
+
+function logout(){
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("loginTime");
+    location.reload();
+}
+
+</script>
+
+<body>
+
+<div id="login-page">
+    <div class="login-box">
+        <h2>PFG Dashboard Login</h2>
+        <input type="password" id="password" placeholder="Enter password">
+        <button onclick="checkLogin()">Login</button>
+        <p id="error-msg"></p>
+    </div>
+</div>
+
+<div id="main-content" style="display:none;">
+
+<!-- HEADER -->
+<div class="header">
+    <div class="header-left">
+        <img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALAAAACUCAMAAAAEVFNMAAAAhFBMVEX///8Jcc4Ab80Abc0AaszY5fUjetEAZcsAZ8u/1fCevOcAY8o6hdVzpd+px+vn7vkAX8lLkNjf6vfR4vX2+v0HddDr8voAW8h1oNy1z+27y+uQtOTH2fGfwOiBreEAVsdWitVtm9tgl9o8f9I2dM+MrOBdkdg+itZnn91NhNSAqOBqldmRuMBNAAALuUlEQVR4nO1cCVOrPBeGJIRAKKUQKBjgFrAb9///v++EpVYFTJ16X+cbnhlra7M8nJwtm4axYsWKFStWrFixYsWKFStWrFjxe7C1lhEmYqamSLZhuFR1+7H0Fz1p8XWudBne4e/R/8w5cWRaH7xmoWbc3qqFxbE6nb3FjuJai7BJ0BfAmKBX+YFu/YoIwXixIqkGwpn3ir8qDMV3WoQJMjWA+PluwIQMdKqRtCMc7QKk04kmYaxFWDV3G19RM61K7KhK55To9cDkPMtvEDZZOVa5MK0KCDlQODSxZgeB9VzCJhmUwteUGN90o6FZ2mTtnDf6NuF+yJKdlshwcEqgtKOlvjAcwS7R4vtGGLzBFN6sC//tROC8KTAiyvinQQtVWqQ3AaP5soDY1aP7RphJZwqZPI9doqbTiZbd6Hqt60/WcvJBH5ObgDGqpJ9Nl3YcPfV9R5jP1Qm9QQUQjdTnZtQIXH4dmnJ+e9pMT0X1CUdzJbJBpCjO4ZPgQwVcazCQY12UPYeuDuGw6YsgU7mp7X6QmZ1rtH4Z9AkfnsVXh/AV3Uk4DwbCXGeIz4P+vDnxf0A4Mu8JO8GoIDqt06F1u/iHhNt3OpwNZoQ8ndbjsfWnqfCXhMPy5tY6wr49aOVDhAPn6YQDYCMstz5770DfIgdqrI+EE6fdeVOgxRJhkZcT1Wq9UHdHOElt+2M0ugus+CQ+EM5owKYDF5cLhKMzn6iGgstjhKPtbjlr7NO/O8I+ns0qRp2dIpzH0/kQfiwfDvJqOWvEcfKO8DmaT+IRDWcJW83MYz6YwONymS8ifZ8jYbTbzSeOZMzFJwhLPlfpwRlHvKgPmAxmdCO8UJ54o/18Jiy8OT163hQJ5oeYjj2OhJeerbkFwQnCs4r0KGFiT4PbqKmKm8u5EUYz5clVvvmnCcL7jxVGU3+QMCkLdxK+k4d3acNNJeh0ed+5TzonCMtPVb4n4UAn+TJ+JNINCcevImz7C4W+SXg2+XmPxwg3twnYQqHvEZ7P1t7jMcLjJB+fFwr9JsK31NRcaP43ES5uk9DTbC4myLe8xM8QDm9xGBOZh9sJhJffRDi5C8QMYsQE7DEl+RWEb/P8Xi8mMX5LHsuHf4iwRb/OVcYR0Fut+mHChqu3Nmtqh66fDRzgA3Zfpnc9EN5+3dobYWTq9X8jrL00IlKitT6ruQA/EEZMd6VjIIxN7QVH4XsaWyL2vKN+D5sAWKD5eEB4ryrY+JGVke1LzYPAZmQWfH/R5GtsFKRuaZjzXlSF4uG109Ap5GYOra9PYMWK/xAi2Vq542RZljvR/Kb7r0AS+Zv6dL02cZdSxDFtrodTment4P9LiCR0So/vuU3G3fFbEoTBnfHa3/4eUYeOm3qEs6VQR7hZ+b9B0CKSdWMS8vVWKCKkaR/YqfsBgMbuSMCw5r6tSg32df5faYblyzO29c5h3KsG0U4PnspWnigi+jvu94z1pkjPgwidC1N6oM9ReYxuu0D5Ds0V+Cchcdwq1jpYcyOLmXIfjXc+n2mMIWNcWmx5LrZ+3cRMny1CQM88t35uhdsEAJP9yPGX1t+eBZFYfmoGXN8fKCcWXzc/5nnFvK8RVuamZ5PpnVga2Qa0KvIfzH5FVrd+9LEDEWZl7VFwRQ+YGIRiTi75z+c8xZX/2eNz3R6P8njc1F4cBIHaGtRXg87EzEP7biIPWUbkuOXFa+BZYu+cPk2HRX6kHCZk3cqSEurDXhYzsnOdO9GKCNTpQLma6PVeDWP7mV4iefFsjaxgSrQgW+a51j3bbHOl6JM6fTdwwEhZVq5gKafzdt5THuLFtGuKLWZqC+puhURYxY4Hk8/+HcIi8iWMFO0z1jhuvFNautlgdEnueg/4BMQCfJLvUvTET2O7E+zHlcDvEBb5pYm7kXp3shU+x8354lu9gGTMVRa2QLuvxmzaZu9T87BsiK0sweZq2VhNPhi3O7tQnT5GWFglOJ1pHv3cgNs72e3YJX51aFBvf28P15dSdFBzPaXux2QxcQ5/8PVUlRDe7r1kEuZZUVYnaPIRo8tT9PVYQ/Cn9VGJWljOSyHbdOc1cdx7DxNmaaeqlcWLY31e1Uvc+iRf8oXJUGI5+qdWko2pmQgoK4qbTdbLSIg+EVBQ78RcXHT86I6r2OaZX8gSIIts6SmmIXyivYbbawjMHWn6joOeXKzcl7WHgn3Ax+0Dmwd7Tk9KUXSb27a8twMA6KVmrEXMNr3UzazZXt6H88Qp2gPFKk58NhRI3mxMPb0Zh0NNiLrSzQC+K9Md7Y1WRz2UA/Hq0gk/sIY41l7uFsgjuaMmXgyRKtHQM7rPaR44482pIVr5rfJgDEYmPtdH6Ra+68rNjgb8cMsLQmfTO8LZNsAFckS9w6HVIjwNSB3lienPJEHat32sgLSjTxNZ29jz7kdZA8fnVr48ZeVKJNklJjoLC3cUCDHd0auF5d2pt4lHJJjWRZQspNzfQORWECT0LBHY0nRcmd9mdTArWzXrOP3UrAOChLtD/EvSECh3xWhpkfTY3KEr0ANUfZ4UPJf0Nip3iJAx0XjrvF/Tg78D28HFCWBrzu0cKddSO/9opTXKZPr30FDIkFjvtgmK6fXwNy39qKMAiUFRzY8G1KPVs46Wa0Jly7njvHTIHCe/N+9sE+/3wTRbBNkmO/ma25f/CJBagA+HGIHJW5aqrlbAj+mV/2D++T3AnNptIWH0GoB3OFUb6c+H8N+C8b5f+GQ/u2LFihX/b+iuQHeZk7AiyGTDqL8V3X1O4KX7MolgGiSiMb3pSqjSUDwaksRt1H+9vTXYYSjw1g00E0VDQfW9FRrh+yrLoE1Dm25GE3m0FUYbq/hEPWFklLqGSNV1anjdGIZLaZ/tWlSViaUhSi+OG6m6z65xTCugUKovD22fxW/TJo6vMhHQCXSjzunkNRQ8OYYhY3XOqY5bo1UkDlIvwEAe+GoSAkyONjYjI8WvkL28UiFqyLKFkWPkGA5hliEgv/zbE0b49fWVHA2YsMJvVgnDZcx8xcwOjZYh9bfuemNiMqw+ZMIkqgYrDIfD9zAlyAzJKRQ5BKmRdlUCvWNH2PaN5MSP0LjZdBdcBOJqDSY3kReA5Ct+SrwAJoh+0JjddSTDMlmXdUmOXHUglPshZlVi5A3xjNJO1egwdQu7ZmpMfBioWJ1K28CjmeRsGeGB0UTaHWEOhO1Sfal1f6wjbGx4C3xqn5vQi8DdAfCSXwq1ExUGaEMQyOtK/F1/ZQcIF6DDybVjBXKuXvhevSsIDUtb3XAvlYjD67i72RN2WZX1t51zzqN7wpvuuJYeYbLJypi5RgwDRzmwTzrCWxSEVqxum5QMq1OGGfG2Ge+uy1jd0gfzr/3pw429K2ym3jlmHPWEM0ZDI6JYGUdROSK2ZeZSJjNClamJgDt3hNkuK/p70BqETfvPHoYqY7Hrn2FIB8IuN/3CI6m6Yom9EOyOnX2fdDf5LBOf0jSNDqzqJXxx+D7pJbwdJezdJFwFIA4z+MPJKXFwd4BMSdi1lQ6cYXBTwv78sc+aJwNJXRS5MCrMgj1XFtYRFg1m+4BjdSWttdOOZLAPGG56lehWGmWAwFNIm2chInVoOA07gA5XiXAoU8sioMO+If5245cWDagq6LAXGZbHqMg4dsCmwU5AFkXhaPo1wjvjzBGWWeZ7wE0QIOwzWsBnk8Ogt0EFIgto5mcuVgZp9WZpGB5jscmUJheE4Rh+EuUlTMTYQckreWUkNgkQNvc5qAnOjdyGgtg2HWN7gC8xWJ9INbWhQ0O7VSWXdv+OomhOIfjM3Gib7l8XlLQWhqQgGa8rl6QNGLTl0X4DSxw9ZHpu54cPMW5SsE3ZeJ53OvbyCtMGxQfww2eq7us18Gh5TRGtVH0rpSiuImiFPnDHNQy7prf9LxFCRIMfMXxOwlC9JKrcMC/eDqV6QHwbVC+x+pgHVYY2+/ajLoZ1NZLuFSLoLWL275JwPRi4YsWKFStWrFixYsWKFStWrFjxe7C1lhEmYqamSLZhuFR1+7H0Fz1p8XWudBne4e/R/8w5cWRaH7xmoWbc3qqFxbE6nb3FjuJai7BJ0BfAmKBX+YFu/YoIwXixIqkGwpn3ir8qDMV3WoQJMjWA+PluwIQMdKqRtCMc7QKk04kmYaxFWDV3G19RM61K7KhK55To9cDkPMtvEDZZOVa5MK0KCDlQODSxZgeB9VzCJhmUwteUGN90o6FZ2mTtnDf6NuF+yJKdlshwcEqgtKOlvjAcwS7R4vtGGLzBFN6sC//tROC8KTAiyvinQQtVWqQ3AaP5soDY1aP7RphJZwqZPI9doqbTiZbd6Hqt60/WcvJBH5ObgDGqpJ9Nl3YcPfV9R5jP1Qm9QQUQjdTnZtQIXH4dmnJ+e9pMT0X1CUdzJbJBpCjO4ZPgQwVcazCQY12UPYeuDuGw6YsgU7mp7X6QmZ1rtH4Z9AkfnsVXh/AV3Uk4DwbCXGeIz4P+vDnxf0A4Mu8JO8GoIDqt06F1u/iHhNt3OpwNZoQ8ndbjsfWnqfCXhMPy5tY6wr49aOVDhAPn6YQDYCMstz5770DfIgdqrI+EE6fdeVOgxRJhkZcT1Wq9UHdHOElt+2M0ugus+CQ+EM5owKYDF5cLhKMzn6iGgstjhKPtbjlr7NO/O8I+ns0qRp2dIpzH0/kQfiwfDvJqOWvEcfKO8DmaT+IRDWcJW83MYz6YwONymS8ifZ8jYbTbzSeOZMzFJwhLPlfpwRlHvKgPmAxmdCO8UJ54o/18Jiy8OT163hQJ5oeYjj2OhJeerbkFwQnCs4r0KGFiT4PbqKmKm8u5EUYz5clVvvmnCcL7jxVGU3+QMCkLdxK+k4d3acNNJeh0ed+5TzonCMtPVb4n4UAn+TJ+JNINCcevImz7C4W+SXg2+XmPxwg3twnYQqHvEZ7P1t7jMcLjJB+fFwr9JsK31NRcaP43ES5uk9DTbC4myLe8xM8QDm9xGBOZh9sJhJffRDi5C8QMYsQE7DEl+RWEb/P8Xi8mMX5LHsuHf4iwRb/OVcYR0Fut+mHChqu3Nmtqh66fDRzgA3Zfpnc9EN5+3dobYWTq9X8jrL00IlKitT6ruQA/EEZMd6VjIIxN7QVH4XsaWyL2vKN+D5sAWKD5eEB4ryrY+JGVke1LzYPAZmQWfH/R5GtsFKRuaZjzXlSF4uG109Ap5GYOra9PYMWK/xAi2Vq542RZljvR/Kb7r0AS+Zv6dL02cZdSxDFtrodTment4P9LiCR0So/vuU3G3fFbEoTBnfHa3/4eUYeOm3qEs6VQR7hZ+b9B0CKSdWMS8vVWKCKkaR/YqfsBgMbuSMCw5r6tSg32df5faYblyzO29c5h3KsG0U4PnspWnigi+jvu94z1pkjPgwidC1N6oM9ReYxuu0D5Ds0V+Cchcdwq1jpYcyOLmXIfjXc+n2mMIWNcWmx5LrZ+3cRMny1CQM88t35uhdsEAJP9yPGX1t+eBZFYfmoGXN8fKCcWXzc/5nnFvK8RVuamZ5PpnVga2Qa0KvIfzH5FVrd+9LEDEWZl7VFwRQ+YGIRiTi75z+c8xZX/2eNz3R6P8njc1F4cBIHaGtRXg87EzEP7biIPWUbkuOXFa+BZYu+cPk2HRX6kHCZk3cqSEurDXhYzsnOdO9GKCNTpQLma6PVeDWP7mV4iefFsjaxgSrQgW+a51j3bbHOl6JM6fTdwwEhZVq5gKafzdt5THuLFtGuKLWZqC+puhURYxY4Hk8/+HcIi8iWMFO0z1jhuvFNautlgdEnueg/4BMQCfJLvUvTET2O7E+zHlcDvEBb5pYm7kXp3shU+x8354lu9gGTMVRa2QLuvxmzaZu9T87BsiK0sweZq2VhNPhi3O7tQnT5GWFglOJ1pHv3cgNs72e3YJX51aFBvf28P15dSdFBzPaXux2QxcQ5/8PVUlRDe7r1kEuZZUVYnaPIRo8tT9PVYQ/Cn9VGJWljOSyHbdOc1cdx7DxNmaaeqlcWLY31e1Uvc+iRf8oXJUGI5+qdWko2pmQgoK4qbTdbLSIg+EVBQ78RcXHT86I6r2OaZX8gSIIts6SmmIXyivYbbawjMHWn6joOeXKzcl7WHgn3Ax+0Dmwd7Tk9KUXSb27a8twMA6KVmrEXMNr3UzazZXt6H88Qp2gPFKk58NhRI3mxMPb0Zh0NNiLrSzQC+K9Md7Y1WRz2UA/Hq0gk/sIY41l7uFsgjuaMmXgyRKtHQM7rPaR44482pIVr5rfJgDEYmPtdH6Ra+68rNjgb8cMsLQmfTO8LZNsAFckS9w6HVIjwNSB3lienPJEHat32sgLSjTxNZ29jz7kdZA8fnVr48ZeVKJNklJjoLC3cUCDHd0auF5d2pt4lHJJjWRZQspNzfQORWECT0LBHY0nRcmd9mdTArWzXrOP3UrAOChLtD/EvSECh3xWhpkfTY3KEr0ANUfZ4UPJf0Nip3iJAx0XjrvF/Tg78D28HFCWBrzu0cKddSO/9opTXKZPr30FDIkFjvtgmK6fXwNy39qKMAiUFRzY8G1KPVs46Wa0Jly7njvHTIHCe/N+9sE+/3wTRbBNkmO/ma25f/CJBagA+HGIHJW5aqrlbAj+mV/2D++T3AnNptIWH0GoB3OFUb6c+H8N+C8b5f+GQ/u2LFihX/b+iuQHeZk7AiyGTDqL8V3X1O4KX7MolgGiSiMb3pSqjSUDwaksRt1H+9vTXYYSjw1g00E0VDQfW9FRrh+yrLoE1Dm25GE3m0FUYbq/hEPWFklLqGSNV1anjdGIZLaZ/tWlSViaUhSi+OG6m6z65xTCugUKovD22fxW/TJo6vMhHQCXSjzunkNRQ8OYYhY3XOqY5bo1UkDlIvwEAe+GoSAkyONjYjI8WvkL28UiFqyLKFkWPkGA5hliEgv/zbE0b49fWVHA2YsMJvVgnDZcx8xcwOjZYh9bfuemNiMqw+ZMIkqgYrDIfD9zAlyAzJKRQ5BKmRdlUCvWNH2PaN5MSP0LjZdBdcBOJqDSY3kReA5Ct+SrwAJoh+0JjddSTDMlmXdUmOXHUglPshZlVi5A3xjNJO1egwdQu7ZmpMfBioWJ1K28CjmeRsGeGB0UTaHWEOhO1Sfal1f6wjbGx4C3xqn5vQi8DdAfCSXwq1ExUGaEMQyOtK/F1/ZQcIF6DDybVjBXKuXvhevSsIDUtb3XAvlYjD67i72RN2WZX1t51zzqN7wpvuuJYeYbLJypi5RgwDRzmwTzrCWxSEVqxum5QMq1OGGfG2Ge+uy1jd0gfzr/3pw429K2ym3jlmHPWEM0ZDI6JYGUdROSK2ZeZSJjNClamJgDt3hNkuK/p70BqETfvPHoYqY7Hrn2FIB8IuN/3CI6m6Yom9EOyOnX2fdDf5LBOf0jSNDqzqJXxx+D7pJbwdJezdJFwFIA4z+MPJKXFwd4BMSdi1lQ6cYXBTwv78sc+aJwNJXRS5MCrMgj1XFtYRFg1m+4BjdSWttdOOZLAPGG56lehWGmWAwFNIm2chInVoOA07gA5XiXAoU8sioMO+If5245cWDagq6LAXGZbHqMg4dsCmwU5AFkXhaPo1wjvjzBGWWeZ7wE0QIOwzWsBnk8Ogt0EFIgto5mcuVgZp9WZpGB5jscmUJheE4Rh+EuUlTMTYQckreWUkNgkQNvc5qAnOjdyGgtg2HWN7gC8xWJ9INbWhQ0O7VSWXdv+OomhOIfjM3Gib7l8XlLQWhqQgGa8rl6QNGLTl0X4DSxw9ZHpu54cPMW5SsE3ZeJ53OvbyCtMGxQfww2eq7us18Gh5TRGtVH0rpSiuImiFPnDHNQy7prf9LxFCRIMfMXxOwlC9JKrcMC/eDqV6QHwbVC+x+pgHVYY2+/ajLoZ1NZLuFSLoLWL275JwPRi4YsWKFStWrFixYsWKFStWrFjxe7C1lhEmYqamSLZhuFR1+7H0Fz1p8XWudBne4e/R/8w5cWRaH7xmoWbc3qqFxbE6nb3FjuJai7BJ0BfAmKBX+YFu/YoIwXixIqkGwpn3ir8qDMV3WoQJMjWA+PluwIQMdKqRtCMc7QKk04kmYaxFWDV3G19RM61K7KhK55To9cDkPMtvEDZZOVa5MK0KCDlQODSxZgeB9VzCJhmUwteUGN90o6FZ2mTtnDf6NuF+yJKdlshwcEqgtKOlvjAcwS7R4vtGGLzBFN6sC//tROC8KTAiyvinQQtVWqQ3AaP5soDY1aP7RphJZwqZPI9doqbTiZbd6Hqt60/WcvJBH5ObgDGqpJ9Nl3YcPfV9R5jP1Qm9QQUQjdTnZtQIXH4dmnJ+e9pMT0X1CUdzJbJBpCjO4ZPgQwVcazCQY12UPYeuDuGw6YsgU7mp7X6QmZ1rtH4Z9AkfnsVXh/AV3Uk4DwbCXGeIz4P+vDnxf0A4Mu8JO8GoIDqt06F1u/iHhNt3OpwNZoQ8ndbjsfWnqfCXhMPy5tY6wr49aOVDhAPn6YQDYCMstz5770DfIgdqrI+EE6fdeVOgxRJhkZcT1Wq9UHdHOElt+2M0ugus+CQ+EM5owKYDF5cLhKMzn6iGgstjhKPtbjlr7NO/O8I+ns0qRp2dIpzH0/kQfiwfDvJqOWvEcfKO8DmaT+IRDWcJW83MYz6YwONymS8ifZ8jYbTbzSeOZMzFJwhLPlfpwRlHvKgPmAxmdCO8UJ54o/18Jiy8OT163hQJ5oeYjj2OhJeerbkFwQnCs4r0KGFiT4PbqKmKm8u5EUYz5clVvvmnCcL7jxVGU3+QMCkLdxK+k4d3acNNJeh0ed+5TzonCMtPVb4n4UAn+TJ+JNINCcevImz7C4W+SXg2+XmPxwg3twnYQqHvEZ7P1t7jMcLjJB+fFwr9JsK31NRcaP43ES5uk9DTbC4myLe8xM8QDm9xGBOZh9sJhJffRDi5C8QMYsQE7DEl+RWEb/P8Xi8mMX5LHsuHf4iwRb/OVcYR0Fut+mHChqu3Nmtqh66fDRzgA3Zfpnc9EN5+3dobYWTq9X8jrL00IlKitT6ruQA/EEZMd6VjIIxN7QVH4XsaWyL2vKN+D5sAWKD5eEB4ryrY+JGVke1LzYPAZmQWfH/R5GtsFKRuaZjzXlSF4uG109Ap5GYOra9PYMWK/xAi2Vq542RZljvR/Kb7r0AS+Zv6dL02cZdSxDFtrodTment4P9LiCR0So/vuU3G3fFbEoTBnfHa3/4eUYeOm3qEs6VQR7hZ+b9B0CKSdWMS8vVWKCKkaR/YqfsBgMbuSMCw5r6tSg32df5faYblyzO29c5h3KsG0U4PnspWnigi+jvu94z1pkjPgwidC1N6oM9ReYxuu0D5Ds0V+Cchcdwq1jpYcyOLmXIfjXc+n2mMIWNcWmx5LrZ+3cRMny1CQM88t35uhdsEAJP9yPGX1t+eBZFYfmoGXN8fKCcWXzc/5nnFvK8RVuamZ5PpnVga2Qa0KvIfzH5FVrd+9LEDEWZl7VFwRQ+YGIRiTi75z+c8xZX/2eNz3R6P8njc1F4cBIHaGtRXg87EzEP7biIPWUbkuOXFa+BZYu+cPk2HRX6kHCZk3cqSEurDXhYzsnOdO9GKCNTpQLma6PVeDWP7mV4iefFsjaxgSrQgW+a51j3bbHOl6JM6fTdwwEhZVq5gKafzdt5THuLFtGuKLWZqC+puhURYxY4Hk8/+HcIi8iWMFO0z1jhuvFNautlgdEnueg/4BMQCfJLvUvTET2O7E+zHlcDvEBb5pYm7kXp3shU+x8354lu9gGTMVRa2QLuvxmzaZu9T87BsiK0sweZq2VhNPhi3O7tQnT5GWFglOJ1pHv3cgNs72e3YJX51aFBvf28P15dSdFBzPaXux2QxcQ5/8PVUlRDe7r1kEuZZUVYnaPIRo8tT9PVYQ/Cn9VGJWljOSyHbdOc1cdx7DxNmaaeqlcWLY31e1Uvc+iRf8oXJUGI5+qdWko2pmQgoK4qbTdbLSIg+EVBQ78RcXHT86I6r2OaZX8gSIIts6SmmIXyivYbbawjMHWn6joOeXKzcl7WHgn3Ax+0Dmwd7Tk9KUXSb27a8twMA6KVmrEXMNr3UzazZXt6H88Qp2gPFKk58NhRI3mxMPb0Zh0NNiLrSzQC+K9Md7Y1WRz2UA/Hq0gk/sIY41l7uFsgjuaMmXgyRKtHQM7rPaR44482pIVr5rfJgDEYmPtdH6Ra+68rNjgb8cMsLQmfTO8LZNsAFckS9w6HVIjwNSB3lienPJEHat32sgLSjTxNZ29jz7kdZA8fnVr48ZeVKJNklJjoLC3cUCDHd0auF5d2pt4lHJJjWRZQspNzfQORWECT0LBHY0nRcmd9mdTArWzXrOP3UrAOChLtD/EvSECh3xWhpkfTY3KEr0ANUfZ4UPJf0Nip3iJAx0XjrvF/Tg78D28HFCWBrzu0cKddSO/9opTXKZPr30FDIkFjvtgmK6fXwNy39qKMAiUFRzY8G1KPVs46Wa0Jly7njvHTIHCe/N+9sE+/3wTRbBNkmO/ma25f/CJBagA+HGIHJW5aqrlbAj+mV/2D++T3AnNptIWH0GoB3OFUb6c+H8N+C8b5f+GQ/u2LFihX/b+iuQHeZk7AiyGTDqL8V3X1O4KX7MolgGiSiMb3pSqjSUDwaksRt1H+9vTXYYSjw1g00E0VDQfW9FRrh+yrLoE1Dm25GE3m0FUYbq/hEPWFklLqGSNV1anjdGIZLaZ/tWlSViaUhSi+OG6m6z65xTCugUKovD22fxW/TJo6vMhHQCXSjzunkNRQ8OYYhY3XOqY5bo1UkDlIvwEAe+GoSAkyONjYjI8WvkL28UiFqyLKFkWPkGA5hliEgv/zbE0b49fWVHA2YsMJvVgnDZcx8xcwOjZYh9bfuemNiMqw+ZMIkqgYrDIfD9zAlyAzJKRQ5BKmRdlUCvWNH2PaN5MSP0LjZdBdcBOJqDSY3kReA5Ct+SrwAJoh+0JjddSTDMlmXdUmOXHUglPshZlVi5A3xjNJO1egwdQu7ZmpMfBioWJ1K28CjmeRsGeGB0UTaHWEOhO1Sfal1f6wjbGx4C3xqn5vQi8DdAfCSXwq1ExUGaEMQyOtK/F1/ZQcIF6DDybVjBXKuXvhevSsIDUtb3XAvlYjD67i72RN2WZX1t51zzqN7wpvuuJYeYbLJypi5RgwDRzmwTzrCWxSEVqxum5QMq1OGGfG2Ge+uy1jd0gfzr/3pw429K2ym3jlmHPWEM0ZDI6JYGUdROSK2ZeZSJjNClamJgDt3hNkuK/p70BqETfvPHoYqY7Hrn2FIB8IuN/3CI6m6Yom9EOyOnX2fdDf5LBOf0jSNDqzqJXxx+D7pJbwdJezdJFwFIA4z+MPJKXFwd4BMSdi1lQ6cYXBTwv78sc+aJwNJXRS5MCrMgj1XFtYRFg1m+4BjdSWttdOOZLAPGG56lehWGmWAwFNIm2chInVoOA07gA5XiXAoU8sioMO+If5245cWDagq6LAXGZbHqMg4dsCmwU5AFkXhaPo1wjvjzBGWWeZ7wE0QIOwzWsBnk8Ogt0EFIgto5mcuVgZp9WZpGB5jscmUJheE4Rh+EuUlTMTYQckreWUkNgkQNvc5qAnOjdyGgtg2HWN7gC8xWJ9INbWhQ0O7VSWXdv+OomhOIfjM3Gib7l8XlLQWhqQgGa8rl6QNGLTl0X4DSxw9ZHpu54cPMW5SsE3ZeJ53OvbyCtMGxQfww2eq7us18Gh5TRGtVH0rpSiuImiFPnDHNQy7prf9LxFCRIMfMXxOwlC9JKrcMC/eDqV6QHwbVC+x+pgHVYY2+/ajLoZ1NZLuFSLoLWL275JwPRi4YsWKFStWrFixYsWKFStWrFjxe/AfBO3hASMWQdsAAAAASUVORK5CYII=">
+
+        <div class="header-title">
+            PFG Downtime Analysis Dashboard 2026
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-item active">Dashboard</div>
+        <div class="nav-item" onclick="logout()">Logout</div>
+    </div>
+</div>
+
+<!-- CONTENT -->
+<div class="dashboard-container">
+
+    <!-- DASHBOARD -->
+    <div id="dashboard-section">
+        <div class="dashboard-card">
+            <div class="powerbi-wrapper">
+                <iframe title="PFG - Downtime Analysis" width="600" height="373.5"
+                    src="https://app.powerbi.com/view?r=eyJrIjoiYzU2ZmI5MjItNmQwOC00ZWJiLWEwZjEtODhkYmQ3NTcyODU2IiwidCI6IjIyZTY1OThjLWMzMmMtNDgxMC1iMGQ5LTA2NjE4ZTJhZThiMSIsImMiOjEwfQ%3D%3D"
+                    frameborder="0" allowFullScreen="true"></iframe>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</div>
+</body>
+</html>

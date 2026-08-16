@@ -18,21 +18,19 @@ body{
     margin:0;
     font-family:'Poppins', sans-serif;
     min-height:100vh;
-    background: url("Background.jpg") no-repeat center center;
-    background-size: cover;
+    background: #021530;
     color:white;
 }
 
 /* =========================
-   LANDING PAGE (animated hero)
+   OCEAN BACKGROUND (fixed, sits behind landing page AND dashboard page)
 ========================= */
 
-#landing-page{
-    position:relative;
-    height:100vh;
-    width:100%;
+#ocean-bg{
+    position:fixed;
+    inset:0;
+    z-index:0;
     overflow:hidden;
-    display:flex;
 }
 
 .landing-bg{
@@ -52,6 +50,19 @@ body{
         linear-gradient(105deg, transparent 45%, rgba(255,255,255,0.08) 48%, transparent 52%),
         linear-gradient(125deg, transparent 60%, rgba(255,255,255,0.06) 63%, transparent 67%);
     pointer-events:none;
+}
+
+/* =========================
+   LANDING PAGE (animated hero)
+========================= */
+
+#landing-page{
+    position:relative;
+    z-index:1;
+    height:100vh;
+    width:100%;
+    overflow:hidden;
+    display:flex;
 }
 
 .landing-scrim{
@@ -128,8 +139,8 @@ body{
     display:inline-flex;
     align-items:center;
     gap:8px;
-    background: rgba(255,255,255,0.12);
-    border:1px solid rgba(255,255,255,0.25);
+    background: rgba(50, 120, 220, 0.28);
+    border:1px solid rgba(110, 170, 255, 0.4);
     backdrop-filter: blur(6px);
     padding:6px 14px;
     border-radius:20px;
@@ -494,14 +505,18 @@ function logout(){
 
 <body>
 
-<!-- LANDING PAGE -->
-<div id="landing-page">
+<!-- OCEAN BACKGROUND — fixed behind landing page AND dashboard page -->
+<div id="ocean-bg">
     <div class="landing-bg"></div>
-    <div class="landing-scrim"></div>
     <div class="bubbles">
         <span></span><span></span><span></span><span></span>
         <span></span><span></span><span></span><span></span>
     </div>
+</div>
+
+<!-- LANDING PAGE -->
+<div id="landing-page">
+    <div class="landing-scrim"></div>
 
     <div class="landing-content">
         <div class="landing-nav">

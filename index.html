@@ -603,156 +603,6 @@ body{
     border-radius:6px;
 }
 
-body.theme-brown #ocean-bg .landing-bg{
-    background:
-        radial-gradient(circle at 12% 18%, rgba(201, 160, 110, 0.40) 0%, rgba(201, 160, 110, 0) 38%),
-        radial-gradient(circle at 88% 12%, rgba(255, 224, 178, 0.75) 0%, rgba(255, 224, 178, 0) 42%),
-        radial-gradient(circle at 78% 88%, rgba(165, 120, 78, 0.30) 0%, rgba(165, 120, 78, 0) 45%),
-        radial-gradient(circle at 20% 95%, rgba(222, 190, 150, 0.45) 0%, rgba(222, 190, 150, 0) 40%),
-        linear-gradient(160deg, #f8f2e8 0%, #efe3d2 55%, #e4d3bc 100%);
-}
-
-/* replace the diagonal light streaks with a fine dot grid */
-body.theme-brown .landing-bg::before{
-    background-image: radial-gradient(rgba(95, 70, 45, 0.16) 1px, transparent 1.2px);
-    background-size: 24px 24px;
-    -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.15) 100%);
-            mask-image: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.15) 100%);
-}
-
-/* same rising bubbles, restyled as glass rings */
-body.theme-brown .bubbles span{
-    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.85) 0%, rgba(190, 145, 98, 0.18) 70%);
-    border: 1px solid rgba(160, 120, 80, 0.30);
-    box-shadow: 0 0 14px rgba(190, 145, 98, 0.25);
-}
-
-body.theme-brown .header{
-    background: linear-gradient(90deg, #4a3626 0%, #6f5339 50%, #946d46 100%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-    box-shadow: 0 6px 22px rgba(74, 54, 38, 0.30);
-}
-
-body.theme-brown .nav-item.active{
-    background: rgba(255, 255, 255, 0.24);
-}
-
-body.theme-brown .nav-item:hover{
-    background: rgba(255, 255, 255, 0.20);
-}
-
-body.theme-brown .dashboard-view-title{
-    color: #4a3626;
-}
-
-body.theme-brown .dashboard-back{
-    color: rgba(74, 54, 38, 0.70);
-}
-
-body.theme-brown .dashboard-back:hover{
-    color: #2c1f14;
-}
-
-/* saturated container with glowing top accent */
-body.theme-brown .dashboard-card{
-    position: relative;
-    border-radius: 20px;
-    background: linear-gradient(145deg, #8a6544 0%, #5c4129 55%, #3f2b1a 100%);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    box-shadow:
-        0 22px 50px rgba(74, 54, 38, 0.38),
-        0 0 0 6px rgba(255, 255, 255, 0.35);
-    backdrop-filter: none;
-}
-
-body.theme-brown .dashboard-card::before{
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 8%;
-    right: 8%;
-    height: 3px;
-    border-radius: 0 0 6px 6px;
-    background: linear-gradient(90deg, transparent, #ffd9a3, transparent);
-    box-shadow: 0 0 18px rgba(255, 217, 163, 0.9);
-}
-
-
-/* =========================================================
-   CHANGEOVER DASHBOARD THEME — modern emerald
-========================================================= */
-
-body.theme-green #ocean-bg .landing-bg{
-    background:
-        radial-gradient(circle at 12% 18%, rgba(43, 181, 138, 0.34) 0%, rgba(43, 181, 138, 0) 38%),
-        radial-gradient(circle at 88% 12%, rgba(167, 243, 220, 0.75) 0%, rgba(167, 243, 220, 0) 42%),
-        radial-gradient(circle at 78% 88%, rgba(19, 138, 108, 0.26) 0%, rgba(19, 138, 108, 0) 45%),
-        radial-gradient(circle at 20% 95%, rgba(120, 220, 195, 0.45) 0%, rgba(120, 220, 195, 0) 40%),
-        linear-gradient(160deg, #f2fbf7 0%, #dff3ea 55%, #c9e8dc 100%);
-}
-
-body.theme-green .landing-bg::before{
-    background-image: radial-gradient(rgba(11, 93, 78, 0.16) 1px, transparent 1.2px);
-    background-size: 24px 24px;
-    -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.15) 100%);
-            mask-image: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.15) 100%);
-}
-
-body.theme-green .bubbles span{
-    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.85) 0%, rgba(43, 181, 138, 0.18) 70%);
-    border: 1px solid rgba(19, 138, 108, 0.30);
-    box-shadow: 0 0 14px rgba(43, 181, 138, 0.28);
-}
-
-body.theme-green .header{
-    background: linear-gradient(90deg, #06342d 0%, #0b5d4e 50%, #138a6c 100%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-    box-shadow: 0 6px 22px rgba(6, 52, 45, 0.30);
-}
-
-body.theme-green .nav-item.active{
-    background: rgba(255, 255, 255, 0.24);
-}
-
-body.theme-green .nav-item:hover{
-    background: rgba(255, 255, 255, 0.20);
-}
-
-body.theme-green .dashboard-view-title{
-    color: #0b4a40;
-}
-
-body.theme-green .dashboard-back{
-    color: rgba(11, 74, 64, 0.70);
-}
-
-body.theme-green .dashboard-back:hover{
-    color: #06342d;
-}
-
-body.theme-green .dashboard-card{
-    position: relative;
-    border-radius: 20px;
-    background: linear-gradient(145deg, #1aa57f 0%, #0e7a60 55%, #0a4f42 100%);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    box-shadow:
-        0 22px 50px rgba(6, 52, 45, 0.38),
-        0 0 0 6px rgba(255, 255, 255, 0.35);
-    backdrop-filter: none;
-}
-
-body.theme-green .dashboard-card::before{
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 8%;
-    right: 8%;
-    height: 3px;
-    border-radius: 0 0 6px 6px;
-    background: linear-gradient(90deg, transparent, #9dffcf, transparent);
-    box-shadow: 0 0 18px rgba(157, 255, 207, 0.9);
-}
-
 /* =========================
    MOBILE RESPONSIVE FIX
 ========================= */
@@ -901,8 +751,6 @@ function showSelector(){
 
     document.getElementById("nav-home").classList.add("active");
     document.getElementById("nav-dashboards").classList.remove("active");
-
-    document.body.classList.remove("theme-brown", "theme-green");
 }
 
 function showDashboard(which){
@@ -922,9 +770,6 @@ function showDashboard(which){
 
     document.getElementById("nav-home").classList.remove("active");
     document.getElementById("nav-dashboards").classList.add("active");
-
-    document.body.classList.toggle("theme-brown", which === "packing");
-    document.body.classList.toggle("theme-green", which === "changeover");
 }
 
 </script>
@@ -1084,7 +929,7 @@ function showDashboard(which){
         <!-- Changeover dashboard -->
         <div class="dashboard-card" id="changeover-dashboard" style="display:none;">
             <div class="powerbi-wrapper">
-               <iframe title="Changeover Downtime" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiNDMwYTM5YWItM2I3Ni00Y2Q2LThmNzItMTBkYTE1ZTdiNjdmIiwidCI6IjIyZTY1OThjLWMzMmMtNDgxMC1iMGQ5LTA2NjE4ZTJhZThiMSIsImMiOjEwfQ%3D%3D" frameborder="0" allowFullScreen="true"></iframe>
+                <iframe title="Changeover Downtime" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiNDMwYTM5YWItM2I3Ni00Y2Q2LThmNzItMTBkYTE1ZTdiNjdmIiwidCI6IjIyZTY1OThjLWMzMmMtNDgxMC1iMGQ5LTA2NjE4ZTJhZThiMSIsImMiOjEwfQ%3D%3D" frameborder="0" allowFullScreen="true"></iframe>
             </div>
         </div>
     </div>
@@ -1094,3 +939,4 @@ function showDashboard(which){
 </div>
 </body>
 </html>
+               
